@@ -11,14 +11,9 @@ function getComputerChoice() {
     return answer
 }
 
-function getHumanChoice() {
-    let answer = prompt("Please choose rock, paper or scissor.").toLowerCase()
-
-    return answer
-}
-
 function playRound(humanChoice, pcChoice) {
     let roundResult = 0             // 1 = human won. 2 = pc won. 0 = draw. 3 = error.
+
     if (humanChoice === 'rock') {
         if (pcChoice === 'scissor') {
             roundResult = 1
@@ -52,31 +47,56 @@ function playRound(humanChoice, pcChoice) {
     return roundResult
 }
 
-function playGame() {
-    let humanScore = 0, pcScore = 0, draw = 0
+function playGame(humanSelection) {
+    const buttons = document.querySelectorAll("button");
+    let roundResult = 0
+    let humanScore = 0, pcScore = 0
 
-    for (i = 1; i < 6; i++) {
-        const humanSelection = getHumanChoice()
-        const pcSelection = getComputerChoice()
-        result = playRound(humanSelection, pcSelection)
-        
-        if (result === 1) {
-            humanScore = humanScore +1
-            console.log(humanScore)
-        } else if (result === 2) {
-            pcScore = pcScore +1
-        } else if (result === 0) {
-            draw = draw +1
-        }
-    }
+    buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+            humanSelection = button.textContent.toLowerCase()
+            roundResult = playRound(humanSelection, getComputerChoice())
 
-    if (humanScore > pcScore) {
-        console.log('Human won!')
-    } else if (pcScore > humanScore) {
-        console.log('Computer won!')
-    } else if (humanScore === pcScore) {
-        console.log("it's a draw")
-    }
+            if (roundResult === 1) {
+                humanScore = humanScore +1
+            } else if (roundResult === 2) {
+                pcScore = pcScore +1
+            }
+
+            humanScorePanel = document.querySelector('.humanScore')
+            humanScorePanel.textContent = humanScore
+            pcScorePanel = document.querySelector('.pcScore')
+            pcScorePanel.textContent = pcScore
+            if (humanScore === 5 || pcScore === 5) {
+                scorePanel = document.querySelector('.scorePanel')
+                
+                if (humanScore === 5) {
+                    winText.textContent = 'Human won!'
+                } else if (pcScore === 5) {
+                    winText.textContent = 'Computer won!'
+                }
+                humanScore = 0
+                pcScore = 0
+                       
+            }
+        })
+    })
+
 }
 
 playGame()
+
+const container = document.querySelector("#container");
+let scorePanel = document.createElement("div");
+scorePanel.classList.add('scorePanel')
+let winText = document.createElement('h1')
+let humanScorePanel = document.createElement("h1");
+humanScorePanel.classList.add('humanScore')
+let pcScorePanel = document.createElement("h1");
+pcScorePanel.classList.add('pcScore')
+
+scorePanel.appendChild(humanScorePanel);
+scorePanel.appendChild(pcScorePanel);
+scorePanel.appendChild(winText) 
+
+container.appendChild(scorePanel);
